@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 //
+import { log } from 'node:console'
 import { ref } from 'vue'
 import djiMavic3 from '@/assets/dji-mavic3.png'
 import djiAri3 from '@/assets/dji-ari3.png'
@@ -45,28 +46,11 @@ const cards = [
 ]
 const window = ref<number>(0)
 
+const imgSrcs = ref(cards[0].imgSrcs)
+
 function cardClick(index: number) {
   window.value = 0
   imgSrcs.value = cards[index].imgSrcs
-}
-const imgSrcs = ref(cards[0].imgSrcs)
-
-function sum(nums: Array<number>) {
-  const n = nums.length
-  const left = [...nums]
-  const right = [...nums]
-  for (let i = 0; i < n; i++)
-    left[i] = Math.min(left[i - 1], left[i])
-
-  for (let i = n - 2; i >= 0; i--)
-    right[i] = Math.min(right[i + 1], right[i])
-
-  const inf = Number.POSITIVE_INFINITY; let best = inf
-  for (let i = 0; i < n - 1; i++) {
-    if (left[i] < nums[i] && right[i] < nums[i])
-      best = Math.min(best, left[i] + nums[i] + right[i])
-  }
-  return best == inf ? -1 : best
 }
 </script>
 
