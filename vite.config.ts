@@ -1,6 +1,7 @@
 // Plugins
 import { URL, fileURLToPath } from 'node:url'
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
 
@@ -13,6 +14,7 @@ export default defineConfig({
     vue({
       template: { transformAssetUrls },
     }),
+    vueJsx(),
     // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
     vuetify({
       autoImport: true,
