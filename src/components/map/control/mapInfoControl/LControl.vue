@@ -24,7 +24,7 @@ export default defineComponent({
       (v) => {
         const { lat, lng } = v
         const point = turf.point([lng, lat])
-        const options = { precision: 7, coordinates: 2 }
+        const options = { precision: 8, coordinates: 2 }
         const coord = turf.getCoord(turf.truncate(point, options))
         mapCenter.value = `${coord[1]},${coord[0]}`
       },
@@ -42,17 +42,17 @@ export default defineComponent({
 
 <template>
   <VCard class="mapInfoControl max-auto pa-2" elevation="8" rounded="lg">
-    <v-row no-gutters>
-      <v-col sm="4">
+    <v-sheet class="d-flex flex-wrap">
+      <v-sheet class="ma-2">
         <VTextField v-model="mapZoom" class="mapZoom" label="zoom" />
-      </v-col>
-      <v-col sm="8">
+      </v-sheet>
+      <v-sheet class="flex-1-0 ma-2">
         <VTextField v-model="mapCenter" class="mapCenter" label="center" size="x-mall" />
-      </v-col>
-      <v-col sm="12">
+      </v-sheet>
+      <v-sheet class="flex-1-1-100 ma-2">
         <VBtn>确定</VBtn>
         <VBtn>取消</VBtn>
-      </v-col>
-    </v-row>
+      </v-sheet>
+    </v-sheet>
   </VCard>
 </template>
