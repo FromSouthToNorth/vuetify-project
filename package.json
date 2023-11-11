@@ -15,6 +15,7 @@
     "@turf/turf": "^6.5.0",
     "core-js": "^3.29.0",
     "leaflet": "^1.9.4",
+    "lodash-es": "^4.17.21",
     "pinia": "^2.1.7",
     "roboto-fontface": "*",
     "vue": "^3.3.7",

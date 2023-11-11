@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css'
 import { onMounted, reactive, ref } from 'vue'
 import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
+import { behaviorHash } from '@/hooks/web/useHash'
 
 const props = defineProps<{
   zoom: number
@@ -40,6 +41,9 @@ onMounted(async () => {
     center,
   })
   appStore.setLMap(map)
+
+  const hash = behaviorHash({ map })
+  hash()
 
   tileLayers.forEach(({ tileUrl, options }) => {
     L.tileLayer(tileUrl, options).addTo(map)
