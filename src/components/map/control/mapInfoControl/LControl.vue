@@ -1,21 +1,22 @@
 <script lang="ts">
-import { LatLng, latLng } from 'leaflet'
+import type { LatLng } from 'leaflet'
 import { defineComponent, ref, watch } from 'vue'
+import L from 'leaflet'
 import { useLMap } from '@/hooks/app/useLMap'
-import { isNumber, isString } from '@/utils/is'
+import { isNumber } from '@/utils/is'
 import { truncate } from '@/utils/geo'
 
 export default defineComponent({
   name: 'LControl',
   setup() {
     const { lMap, lMapZoom, lMapCenter } = useLMap()
-    console.log('lMap: ', lMap);
+    console.log('lMap: ', lMap)
 
     const mapZoom = ref<number>(0)
     const mapCenter = ref<string>('0,0')
     watch(
       () => lMapZoom.value,
-      (v: Number) => {
+      (v: number) => {
         mapZoom.value = v
       },
       {
@@ -32,41 +33,24 @@ export default defineComponent({
         immediate: true,
       },
     )
-    function zoomInput(e: InputEvent) {
-      if (e.target.value)
-        lMap.value.setZoom(e.target.value)
+    function zoomInput() {
     }
-
-    function centerInput(e: InputEvent) {
-      const { value } = e.target
-      if (value) {
-        console.log(value);
-
-        const c = [',', '/']
-        console.log(value.includes('/'));
-
-        let center
-        for (const s of c) {
-          if (value.includes(s)) {
-            center = value?.split(s)
-            console.log(center);
-            break
-          }
-        }
-        console.log(center);
-
-        if (center && center.length === 2) {
-          const zoom = lMap.value.getZoom()
-          lMap.value.setView(center, zoom)
-        }
-      }
+    function centerInput() {
     }
+    function ok() {
+      const latLng = mapCenter.value.split(',')
+      lMap.value.setView({ lat: Number(latLng[0]), lng: Number(latLng[1]) }, mapZoom.value)
+    }
+    const res = 1982.3
+    console.log(res + 4 + 20 + 0.15 * res + (res + 0.15 * res) * 0.13)
+
     return {
       mapZoom,
       mapCenter,
       zoomInput,
       centerInput,
       isNumber,
+      ok,
     }
   },
 })
@@ -90,8 +74,9 @@ export default defineComponent({
       <v-row>
         <v-col class="pa-1">
           <v-sheet>
-            <VBtn>确定</VBtn>
-            <VBtn>取消</VBtn>
+            <VBtn @click="ok">
+              确定
+            </VBtn>
           </v-sheet>
         </v-col>
       </v-row>

@@ -1,6 +1,7 @@
 // Utilities
 import { defineStore } from 'pinia'
-import type { Map } from 'leaflet'
+import type { LatLng, Layer, Map } from 'leaflet'
+import L from 'leaflet'
 
 export const useAppStore = defineStore(
   {
@@ -9,16 +10,28 @@ export const useAppStore = defineStore(
       lMap: {},
       lMapZoom: 0,
       lMapCenter: { lat: 0, lng: 0 },
+      layerGroup: L.layerGroup(),
+      featureGroup: L.featureGroup(),
+      geoJSON: L.geoJSON(),
     }),
     getters: {
-      getLMap(state): object {
+      getLayerGroup(state): Layer[] {
+        return state.layerGroup.getLayers()
+      },
+      getFeatureGroup(state): Layer[] {
+        return state.featureGroup.getLayers()
+      },
+      getGeoJSON(state): Layer[] {
+        return state.geoJSON.getLayers()
+      },
+      getLMap(state): Map {
         return state.lMap
       },
-      getLMapZoom(state): number {
-        return state.lMapZoom
+      getLMapZoom(): number {
+        return this.getLMap.getZoom()
       },
-      getLMapCenter(state): object {
-        return state.lMapCenter
+      getLMapCenter(): LatLng {
+        return this.getLMap.getCenter()
       },
     },
     actions: {
@@ -31,11 +44,14 @@ export const useAppStore = defineStore(
         this.lMapZoom = lMap.getZoom()
         this.lMapCenter = lMap.getCenter()
         this.lMap = lMap
+        this.layerGroup.addTo(lMap)
+        this.featureGroup.addTo(lMap)
+        this.geoJSON.addTo(lMap)
       },
-      setLMapZoom(lMapZoom) {
+      setLMapZoom(lMapZoom: number) {
         this.lMapZoom = lMapZoom
       },
-      setLMapCenter(lMapCenter) {
+      setLMapCenter(lMapCenter: { lat: number; lng: number }) {
         this.lMapCenter = lMapCenter
       },
     },
