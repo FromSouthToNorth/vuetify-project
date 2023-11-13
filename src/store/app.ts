@@ -28,10 +28,10 @@ export const useAppStore = defineStore(
         return state.lMap
       },
       getLMapZoom(): number {
-        return this.getLMap.getZoom()
+        return this.lMapZoom
       },
       getLMapCenter(): LatLng {
-        return this.getLMap.getCenter()
+        return this.lMapCenter
       },
     },
     actions: {

@@ -4,12 +4,17 @@ import 'leaflet/dist/leaflet.css'
 import { onMounted, reactive, ref } from 'vue'
 import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
-import { behaviorHash } from '@/hooks/web/useHash'
+import { behaviorHash } from '@/hooks/web/map/useHash'
+import { layerData } from '@/data'
+import { rectangle } from '@/utils/geo'
+import { useLMap } from '@/hooks/app/useLMap'
 
 const props = defineProps<{
   zoom: number
   center: L.LatLngExpression
 }>()
+
+const { addFeatureGroup } = useLMap()
 
 let map = reactive<L.Map | object>({})
 const mapContainer = ref<string | HTMLElement>('')
@@ -59,9 +64,14 @@ onMounted(async () => {
 
   const myControl = new L.Control.MyControl({ position: 'bottomleft' })
   myControl.addTo(map)
+  layerData.forEach((el) => {
+    const layer = rectangle(el.latlng)
+    addFeatureGroup(layer)
+  })
 })
 </script>
 
 <template>
   <div id="map-container" ref="mapContainer" />
 </template>
+@/hooks/web/map/useHash

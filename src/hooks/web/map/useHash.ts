@@ -40,8 +40,8 @@ export function behaviorHash(context?: any) {
   const _throttledUpdate = _throttle(updateHashIfNeeded, 500)
 
   function hashchange() {
-    console.log('hashchange');
-    
+    console.log('hashchange')
+
     // ignore spurious hashchange events
     if (window.location.hash === _cachedHash)
       return
@@ -55,8 +55,8 @@ export function behaviorHash(context?: any) {
       // don't update if the new hash already reflects the state of iD
       if (_cachedHash === computedHash())
         return
-      console.log('update zoom center');
-      
+      console.log('update zoom center')
+
       map.setView([Math.min(_latitudeLimit, Math.max(-_latitudeLimit, mapArgs[1])), mapArgs[2]], mapArgs[0])
     }
   }

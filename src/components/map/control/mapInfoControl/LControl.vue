@@ -1,16 +1,14 @@
 <script lang="ts">
 import type { LatLng } from 'leaflet'
 import { defineComponent, ref, watch } from 'vue'
-import L from 'leaflet'
 import { useLMap } from '@/hooks/app/useLMap'
 import { isNumber } from '@/utils/is'
-import { truncate } from '@/utils/geo'
+import { marker, truncate } from '@/utils/geo'
 
 export default defineComponent({
   name: 'LControl',
   setup() {
-    const { lMap, lMapZoom, lMapCenter } = useLMap()
-    console.log('lMap: ', lMap)
+    const { lMap, lMapZoom, lMapCenter, addFeatureGroup, removeFeatureGroup } = useLMap()
 
     const mapZoom = ref<number>(0)
     const mapCenter = ref<string>('0,0')
@@ -40,9 +38,14 @@ export default defineComponent({
     function ok() {
       const latLng = mapCenter.value.split(',')
       lMap.value.setView({ lat: Number(latLng[0]), lng: Number(latLng[1]) }, mapZoom.value)
+
+      const layer = marker({ lat: Number(latLng[0]), lng: Number(latLng[1]) })
+
+      layer.on('click', (e) => {
+        removeFeatureGroup(e.sourceTarget)
+      })
+      addFeatureGroup(layer)
     }
-    const res = 1982.3
-    console.log(res + 4 + 20 + 0.15 * res + (res + 0.15 * res) * 0.13)
 
     return {
       mapZoom,
