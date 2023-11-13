@@ -91,4 +91,3 @@ onMounted(async () => {
 <template>
   <div id="map-container" ref="mapContainer" />
 </template>
-@/hooks/web/map/useHash

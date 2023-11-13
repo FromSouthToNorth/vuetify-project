@@ -36,16 +36,6 @@ export default defineComponent({
     watch(
       () => lMapBounds.value,
       (v: LatLngBounds) => {
-        console.log(v)
-
-        // {
-        //     "lat": 45.508632658903785,
-        //     "lng": 119.75955963134766
-        // }
-        // {
-        //     "lat": 45.40519958164984,
-        //     "lng": 119.43288803100587
-        // }
         const _northEast = truncate(v.getNorthEast())
         northEast.value = `${_northEast[1]},${_northEast[0]}`
         const _southWest = truncate(v.getSouthWest())

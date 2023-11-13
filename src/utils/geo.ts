@@ -1,4 +1,4 @@
-import type { LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
+import type { ImageOverlay, LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
 import L from 'leaflet'
 import * as turf from '@turf/turf'
 import type { BBox, FeatureCollection } from '@turf/turf'
@@ -36,4 +36,8 @@ export function randomPoint(amount: number, bbox: BBox): FeatureCollection {
 
 export function geometryToLayer(geoJSON: Feature): Layer {
   return L.GeoJSON.geometryToLayer(geoJSON)
+}
+
+export function imageOverlay(imageUrl, imageBounds): ImageOverlay {
+  return L.imageOverlay(imageUrl, imageBounds)
 }
