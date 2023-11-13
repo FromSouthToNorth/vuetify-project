@@ -1,6 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import type { LatLng, Layer, Map } from 'leaflet'
+import type { FeatureGroup, GeoJSON, LatLng, LatLngBounds, LayerGroup, Map, MarkerClusterGroup } from 'leaflet'
 import L from 'leaflet'
 
 export const useAppStore = defineStore(
@@ -11,18 +11,23 @@ export const useAppStore = defineStore(
       lMapZoom: 0,
       lMapCenter: { lat: 0, lng: 0 },
       layerGroup: L.layerGroup(),
+      lMapBounds: [],
       featureGroup: L.featureGroup(),
       geoJSON: L.geoJSON(),
+      markercluster: L.markerClusterGroup({ chunkedLoading: true }),
     }),
     getters: {
-      getLayerGroup(state): Layer[] {
-        return state.layerGroup.getLayers()
+      getLayerGroup(state): LayerGroup {
+        return state.layerGroup
       },
-      getFeatureGroup(state): Layer[] {
-        return state.featureGroup.getLayers()
+      getFeatureGroup(state): FeatureGroup {
+        return state.featureGroup
       },
-      getGeoJSON(state): Layer[] {
-        return state.geoJSON.getLayers()
+      getGeoJSON(state): GeoJSON {
+        return state.geoJSON
+      },
+      getMarkercluster(state): MarkerClusterGroup {
+        return state.markercluster
       },
       getLMap(state): Map {
         return state.lMap
@@ -33,6 +38,9 @@ export const useAppStore = defineStore(
       getLMapCenter(): LatLng {
         return this.lMapCenter
       },
+      getLMapBounds(): LatLngBounds {
+        return this.lMapBounds
+      },
     },
     actions: {
       setLMap(lMap: Map) {
@@ -40,13 +48,16 @@ export const useAppStore = defineStore(
           const { sourceTarget } = e
           this.lMapZoom = sourceTarget.getZoom()
           this.lMapCenter = sourceTarget.getCenter()
+          this.lMapBounds = sourceTarget.getBounds()
         })
         this.lMapZoom = lMap.getZoom()
         this.lMapCenter = lMap.getCenter()
+        this.lMapBounds = lMap.getBounds()
         this.lMap = lMap
         this.layerGroup.addTo(lMap)
         this.featureGroup.addTo(lMap)
         this.geoJSON.addTo(lMap)
+        this.markercluster.addTo(lMap)
       },
       setLMapZoom(lMapZoom: number) {
         this.lMapZoom = lMapZoom

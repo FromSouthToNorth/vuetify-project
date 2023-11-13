@@ -1,6 +1,8 @@
 import type { LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
 import L from 'leaflet'
 import * as turf from '@turf/turf'
+import type { BBox, FeatureCollection } from '@turf/turf'
+import type { Feature } from 'geojson'
 
 export function truncate(latLng: LatLng, options?: {
   precision?: number
@@ -26,4 +28,12 @@ export function polygon(latlngs: LatLngExpression[] | LatLngExpression[][], opti
 
 export function rectangle(bounds: LatLngBoundsExpression, options?: PolylineOptions): Layer {
   return L.rectangle(bounds, options)
+}
+
+export function randomPoint(amount: number, bbox: BBox): FeatureCollection {
+  return turf.randomPoint(amount, { bbox })
+}
+
+export function geometryToLayer(geoJSON: Feature): Layer {
+  return L.GeoJSON.geometryToLayer(geoJSON)
 }

@@ -1,12 +1,16 @@
 <script lang="ts" setup>
+import type { Layer } from 'leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet.markercluster'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { onMounted, reactive, ref } from 'vue'
 import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
 import { behaviorHash } from '@/hooks/web/map/useHash'
 import { layerData } from '@/data'
-import { rectangle } from '@/utils/geo'
+import { geometryToLayer, randomPoint, rectangle } from '@/utils/geo'
 import { useLMap } from '@/hooks/app/useLMap'
 
 const props = defineProps<{
@@ -14,7 +18,7 @@ const props = defineProps<{
   center: L.LatLngExpression
 }>()
 
-const { addFeatureGroup } = useLMap()
+const { featureGroup, addFeatureGroup, addMarkercluster } = useLMap()
 
 let map = reactive<L.Map | object>({})
 const mapContainer = ref<string | HTMLElement>('')
@@ -44,6 +48,7 @@ onMounted(async () => {
   map = L.map(mapContainer.value, {
     zoom,
     center,
+    maxZoom: 18,
   })
   appStore.setLMap(map)
 
@@ -56,7 +61,7 @@ onMounted(async () => {
 
   L.Control.MyControl = L.Control.extend({
     onAdd() {
-      const c = L.DomUtil.create('div', 'myControl')
+      const c = L.DomUtil.create('div', 'mapInfoControl')
       createMapInfoLControl(c)
       return c
     },
@@ -68,6 +73,18 @@ onMounted(async () => {
     const layer = rectangle(el.latlng)
     addFeatureGroup(layer)
   })
+
+  const bounds = featureGroup.value.getBounds()
+  const geoJSONMarker = randomPoint(60, [bounds.getSouthWest().lng, bounds.getSouthWest().lat, bounds.getNorthEast().lng, bounds.getNorthEast().lat])
+  const marker: Layer[] = []
+  console.time('geometryToLayer')
+  geoJSONMarker.features.forEach((e) => {
+    marker.push(geometryToLayer(e))
+  })
+  console.timeEnd('geometryToLayer')
+  // console.time('addMarkercluster')
+  addMarkercluster(marker)
+  // console.timeEnd('addMarkercluster')
 })
 </script>
 
