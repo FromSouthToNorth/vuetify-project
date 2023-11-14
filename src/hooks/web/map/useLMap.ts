@@ -10,6 +10,22 @@ export const lMapZoom = computed(() => appStore.getLMapZoom)
 export const lMapCenter = computed(() => appStore.getLMapCenter)
 export const lMapBounds = computed(() => appStore.getLMapBounds)
 
+// interface MapLayerGroup {
+//   layerGroup: LayerGroup
+//   featureGroup: FeatureGroup
+//   geoJSON: GeoJSON
+//   markerClusterGroup: MarkerClusterGroup
+// }
+
+const mapLayerGroup = {
+  layerGroup: L.layerGroup(),
+  featureGroup: L.featureGroup(),
+  geoJSON: L.geoJSON(),
+  markerClusterGroup: L.markerClusterGroup(),
+}
+
+type LayerGroupKey = keyof typeof markerClusterGroup
+
 export const layerGroup: LayerGroup = L.layerGroup()
 export const featureGroup: FeatureGroup = L.featureGroup()
 export const geoJSON: GeoJSON = L.geoJSON()
