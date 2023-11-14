@@ -40,8 +40,6 @@ export function behaviorHash(context?: any) {
   const _throttledUpdate = _throttle(updateHashIfNeeded, 500)
 
   function hashchange() {
-    console.log('hashchange')
-
     // ignore spurious hashchange events
     if (window.location.hash === _cachedHash)
       return

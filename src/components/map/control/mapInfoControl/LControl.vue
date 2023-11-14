@@ -1,17 +1,19 @@
 <script lang="ts">
 import type { LatLng, LatLngBounds } from 'leaflet'
 import { defineComponent, ref, watch } from 'vue'
-import { useLMap } from '@/hooks/app/useLMap'
+import { useLMap } from '@/hooks/web/map/useLMap'
 import { isNumber } from '@/utils/is'
-import { marker, truncate } from '@/utils/geo'
+import { circleMarker, icon, marker, truncate } from '@/utils/geo'
+
+import logoUrl from '@/assets/logo.png'
 
 export default defineComponent({
   name: 'LControl',
   setup() {
-    const { lMap, lMapZoom, lMapCenter, lMapBounds, addFeatureGroup, removeFeatureGroup } = useLMap()
+    const { lMap, lMapZoom, lMapCenter, lMapBounds, addFeatureGroup, clearFeatureGroup } = useLMap()
 
-    const mapZoom = ref<number>(0)
-    const mapCenter = ref<string>('0,0')
+    const mapZoom = ref<number>()
+    const mapCenter = ref<string>()
     const northEast = ref<string>()
     const southWest = ref<string>()
     watch(
@@ -54,13 +56,22 @@ export default defineComponent({
     function ok() {
       const latLng = mapCenter.value.split(',')
       lMap.value.setView({ lat: Number(latLng[0]), lng: Number(latLng[1]) }, mapZoom.value)
+      // const _icon = icon({
+      //   iconUrl: logoUrl,
+      //   iconSize: [38, 38],
+      // })
+      // console.log(_icon)
 
-      const layer = marker({ lat: Number(latLng[0]), lng: Number(latLng[1]) })
+      // const layer = marker({ lat: Number(latLng[0]), lng: Number(latLng[1]) }, { icon: _icon })
+      const cMarker = circleMarker({ lat: Number(latLng[0]), lng: Number(latLng[1]) }, {
+        color: '#FF9800',
+        radius: 0,
+        weight: 12,
+      }).bindPopup(`${latLng[0]},${latLng[1]}<br/><p>双击标记点删除</p>`)
 
-      layer.on('click', (e) => {
-        removeFeatureGroup(e.sourceTarget)
-      })
-      addFeatureGroup(layer)
+      cMarker.on('dblclick', clearFeatureGroup)
+
+      addFeatureGroup(cMarker)
     }
 
     return {
@@ -118,3 +129,4 @@ export default defineComponent({
     </v-container>
   </VCard>
 </template>
+@/hooks/web/map/useLMap

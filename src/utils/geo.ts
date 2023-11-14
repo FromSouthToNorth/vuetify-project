@@ -1,4 +1,4 @@
-import type { ImageOverlay, LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
+import type { CircleMarker, CircleMarkerOptions, IconOptions, ImageOverlay, ImageOverlayOptions, LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
 import L from 'leaflet'
 import * as turf from '@turf/turf'
 import type { BBox, FeatureCollection } from '@turf/turf'
@@ -38,6 +38,14 @@ export function geometryToLayer(geoJSON: Feature): Layer {
   return L.GeoJSON.geometryToLayer(geoJSON)
 }
 
-export function imageOverlay(imageUrl, imageBounds): ImageOverlay {
-  return L.imageOverlay(imageUrl, imageBounds)
+export function imageOverlay(imageUrl: string, imageBounds: LatLngBoundsExpression, options?: ImageOverlayOptions): ImageOverlay {
+  return L.imageOverlay(imageUrl, imageBounds, options)
+}
+
+export function icon(options: IconOptions) {
+  return L.icon(options)
+}
+
+export function circleMarker(latlng: LatLngExpression, options?: CircleMarkerOptions): CircleMarker {
+  return L.circleMarker(latlng, options)
 }

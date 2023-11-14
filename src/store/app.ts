@@ -1,7 +1,6 @@
 // Utilities
 import { defineStore } from 'pinia'
-import type { FeatureGroup, GeoJSON, LatLng, LatLngBounds, LayerGroup, Map, MarkerClusterGroup } from 'leaflet'
-import L from 'leaflet'
+import type { LatLng, LatLngBounds, Map } from 'leaflet'
 
 export const useAppStore = defineStore(
   {
@@ -10,25 +9,9 @@ export const useAppStore = defineStore(
       lMap: {},
       lMapZoom: 0,
       lMapCenter: { lat: 0, lng: 0 },
-      layerGroup: L.layerGroup(),
-      lMapBounds: [],
-      featureGroup: L.featureGroup(),
-      geoJSON: L.geoJSON(),
-      markercluster: L.markerClusterGroup({ chunkedLoading: true }),
+      lMapBounds: {},
     }),
     getters: {
-      getLayerGroup(state): LayerGroup {
-        return state.layerGroup
-      },
-      getFeatureGroup(state): FeatureGroup {
-        return state.featureGroup
-      },
-      getGeoJSON(state): GeoJSON {
-        return state.geoJSON
-      },
-      getMarkercluster(state): MarkerClusterGroup {
-        return state.markercluster
-      },
       getLMap(state): Map {
         return state.lMap
       },
@@ -54,10 +37,6 @@ export const useAppStore = defineStore(
         this.lMapCenter = lMap.getCenter()
         this.lMapBounds = lMap.getBounds()
         this.lMap = lMap
-        this.layerGroup.addTo(lMap)
-        this.featureGroup.addTo(lMap)
-        this.geoJSON.addTo(lMap)
-        this.markercluster.addTo(lMap)
       },
       setLMapZoom(lMapZoom: number) {
         this.lMapZoom = lMapZoom
