@@ -1,6 +1,9 @@
 import { computed, toRaw } from 'vue'
-import type { FeatureGroup, GeoJSON, Layer, LayerGroup, LeafletEvent, MarkerClusterGroup } from 'leaflet'
-import L from 'leaflet'
+import L, { GeoJSON } from 'leaflet'
+import type { FeatureGroup, Layer, LayerGroup, LeafletEvent, MarkerClusterGroup } from 'leaflet'
+
+import type { GeoJsonObject } from 'geojson'
+
 import { useAppStore } from '@/store/app'
 import { isArray, isLayers, isLeafletEvent } from '@/utils/is'
 
@@ -10,142 +13,80 @@ export const lMapZoom = computed(() => appStore.getLMapZoom)
 export const lMapCenter = computed(() => appStore.getLMapCenter)
 export const lMapBounds = computed(() => appStore.getLMapBounds)
 
-// interface MapLayerGroup {
-//   layerGroup: LayerGroup
-//   featureGroup: FeatureGroup
-//   geoJSON: GeoJSON
-//   markerClusterGroup: MarkerClusterGroup
-// }
-
-const mapLayerGroup = {
-  layerGroup: L.layerGroup(),
-  featureGroup: L.featureGroup(),
-  geoJSON: L.geoJSON(),
-  markerClusterGroup: L.markerClusterGroup(),
-}
-
-type LayerGroupKey = keyof typeof markerClusterGroup
-
 export const layerGroup: LayerGroup = L.layerGroup()
 export const featureGroup: FeatureGroup = L.featureGroup()
 export const geoJSON: GeoJSON = L.geoJSON()
 export const markerClusterGroup: MarkerClusterGroup = L.markerClusterGroup()
 
+type Group = LayerGroup | FeatureGroup | GeoJSON | MarkerClusterGroup
+
+export const mapLayer: Map<string, Group> = new Map()
+mapLayer.set('layerGroup', layerGroup)
+mapLayer.set('featureGroup', featureGroup)
+mapLayer.set('geoJSON', geoJSON)
+mapLayer.set('markerClusterGroup', markerClusterGroup)
+
+export function setLayerArray(key: string, group: Group) {
+  mapLayer.set(key, group)
+}
+
+export function hasLayerMap(key: string): Group | undefined {
+  return mapLayer.has(key) ? mapLayer.get(key) : undefined
+}
+
 function initLayerGroups() {
   const map = toRaw(lMap.value)
-  layerGroup.addTo(map)
-  featureGroup.addTo(map)
-  geoJSON.addTo(map)
-  markerClusterGroup.addTo(map)
+  mapLayer.forEach((value) => {
+    value.addTo(map)
+  })
 }
 
 export function useLMap() {
-  function addLayerGroup(layers: Layer | Layer[]) {
+  function addLayer(layers: Layer | Layer[] | GeoJsonObject, key?: string) {
+    key = key || 'featureGroup'
+    const group = mapLayer.get(key)
+    if (!group)
+      return
+    if (group instanceof GeoJSON) {
+      if (isArray(layers)) {
+        layers.forEach((layer) => {
+          group.addData(layer)
+        })
+      }
+      else {
+        group.addData(layers)
+      }
+      return
+    }
     if (isArray(layers)) {
       layers.forEach((layer) => {
-        layerGroup.addLayer(layer)
+        group.addLayer(layer)
       })
     }
     else {
-      layerGroup.addLayer(layers)
+      group.addLayer(layers as Layer)
     }
   }
 
-  function clearLayerGroup(layers?: Layer | Layer[]) {
+  function clearLayer(layers?: Layer | Layer[] | LeafletEvent, key?: string) {
+    key = key || 'featureGroup'
+    const group = mapLayer.get(key)
+    if (!group)
+      return
     if (isArray(layers)) {
       layers.forEach((layer) => {
-        layerGroup.removeLayer(layer)
+        group.removeLayer(layer)
       })
     }
-    else if (layers) {
-      layerGroup.removeLayer(layers)
-    }
-    else {
-      layerGroup.clearLayers()
-    }
-  }
-
-  function addFeatureGroup(layers: Layer | Layer[]) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        featureGroup.addLayer(layer)
-      })
-    }
-    else {
-      featureGroup.addLayer(layers)
-    }
-  }
-
-  function clearFeatureGroup(layers?: Layer | Layer[] | LeafletEvent) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        featureGroup.removeLayer(layer)
-      })
-    }
-    else if (layers && isLayers(layers)) {
-      featureGroup.removeLayer(layers)
+    else if (isLayers(layers)) {
+      group.removeLayer(layers as Layer)
     }
     else if (isLeafletEvent(layers)) {
-      featureGroup.removeLayer(layers.sourceTarget)
+      const { sourceTarget } = layers as LeafletEvent
+      group.removeLayer(sourceTarget)
     }
     else {
-      featureGroup.clearLayers()
-    }
-  }
-
-  function addGeoJSON(layers: Layer | Layer[]) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        geoJSON.addLayer(layer)
-      })
-    }
-    else {
-      geoJSON.addLayer(layers)
-    }
-  }
-
-  function clearGeoJSON(layers?: Layer | Layer[]) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        geoJSON.removeLayer(layer)
-      })
-    }
-    else if (layers && isLayers(layers)) {
-      geoJSON.removeLayer(layers)
-    }
-    else if (isLeafletEvent(layers)) {
-      geoJSON.removeLayer(layers.sourceTarget)
-    }
-    else {
-      geoJSON.clearLayers()
-    }
-  }
-
-  function addMarkerClusterGroup(layers: Layer | Layer[]) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        markerClusterGroup.addLayer(layer)
-      })
-    }
-    else {
-      markerClusterGroup.addLayer(layers)
-    }
-  }
-
-  function clearMarkerClusterGroup(layers?: Layer | Layer[]) {
-    if (isArray(layers)) {
-      layers.forEach((layer) => {
-        markerClusterGroup.removeLayer(layer)
-      })
-    }
-    else if (layers && isLayers(layers)) {
-      markerClusterGroup.removeLayer(layers)
-    }
-    else if (isLeafletEvent(layers)) {
-      markerClusterGroup.removeLayer(layers.sourceTarget)
-    }
-    else {
-      markerClusterGroup.clearLayers()
+      group.clearLayers()
     }
   }
 
@@ -159,13 +100,8 @@ export function useLMap() {
     geoJSON,
     markerClusterGroup,
     initLayerGroups,
-    addMarkerClusterGroup,
-    clearMarkerClusterGroup,
-    addLayerGroup,
-    clearLayerGroup,
-    addFeatureGroup,
-    clearFeatureGroup,
-    addGeoJSON,
-    clearGeoJSON,
+    addLayer,
+    clearLayer,
+    hasLayerMap,
   }
 }

@@ -10,7 +10,7 @@ import logoUrl from '@/assets/logo.png'
 export default defineComponent({
   name: 'LControl',
   setup() {
-    const { lMap, lMapZoom, lMapCenter, lMapBounds, addFeatureGroup, clearFeatureGroup } = useLMap()
+    const { lMap, lMapZoom, lMapCenter, lMapBounds, addLayer, clearLayer } = useLMap()
 
     const mapZoom = ref<number>()
     const mapCenter = ref<string>()
@@ -69,9 +69,9 @@ export default defineComponent({
         weight: 12,
       }).bindPopup(`${latLng[0]},${latLng[1]}<br/><p>双击标记点删除</p>`)
 
-      cMarker.on('dblclick', clearFeatureGroup)
+      cMarker.on('dblclick', clearLayer)
 
-      addFeatureGroup(cMarker)
+      addLayer(cMarker)
     }
 
     return {

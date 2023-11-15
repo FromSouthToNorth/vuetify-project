@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Layer, Map } from 'leaflet'
+import type { LatLngBoundsExpression, Layer, Map } from 'leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
@@ -9,8 +9,8 @@ import { onMounted, ref, toRaw } from 'vue'
 import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
 import { behaviorHash } from '@/hooks/web/map/useHash'
-import { layerData } from '@/data'
-import { geometryToLayer, randomPoint, rectangle } from '@/utils/geo'
+import { basePoint, layerData, lineData } from '@/data'
+import { geometryToLayer, imageOverlay, marker, randomPoint, rectangle } from '@/utils/geo'
 import { useLMap } from '@/hooks/web/map/useLMap'
 
 const props = defineProps<{
@@ -41,14 +41,15 @@ const tileLayers: Array<tileLayer> = [
 
 const appStore = useAppStore()
 
-const { initLayerGroups, featureGroup, addFeatureGroup, addMarkerClusterGroup } = useLMap()
+const { initLayerGroups, markerClusterGroup, addLayer, hasLayerMap } = useLMap()
 
 onMounted(async () => {
   const { zoom, center } = props
   map.value = L.map(mapContainer.value, {
     zoom,
     center,
-    maxZoom: 18,
+    minZoom: 3,
+    maxZoom: 25,
   })
   const toRawMap = toRaw(map.value)
   appStore.setLMap(toRawMap)
@@ -71,20 +72,41 @@ onMounted(async () => {
 
   const myControl = new L.Control.MyControl({ position: 'bottomleft' })
   myControl.addTo(toRawMap)
-  layerData.forEach((el) => {
-    const layer = rectangle(el.latlng).bindPopup('rectangle')
-    addFeatureGroup(layer)
+  layerData.forEach(({ name, key, latlng, options }) => {
+    const { url } = options
+    const color = url ? '#4CAF50' : '#FF5722'
+    const layer = rectangle(latlng as LatLngBoundsExpression, { color }).bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
+    addLayer(layer)
+    if (url)
+      addLayer(imageOverlay(options.url, latlng))
   })
+  const markers: Layer[] = []
 
-  const bounds = featureGroup.getBounds()
-  const geoJSONMarker = randomPoint(20, [bounds.getSouthWest().lng, bounds.getSouthWest().lat, bounds.getNorthEast().lng, bounds.getNorthEast().lat])
-  const marker: Layer[] = []
-  geoJSONMarker.features.forEach((e: any) => {
-    marker.push(geometryToLayer(e).bindPopup('markerClusterGroup'))
+  // const bounds = featureGroup.getBounds()
+  // const geoJSONMarker = randomPoint(20, [bounds.getSouthWest().lng, bounds.getSouthWest().lat, bounds.getNorthEast().lng, bounds.getNorthEast().lat])
+  // geoJSONMarker.features.forEach((e: any) => {
+  //   marker.push(geometryToLayer(e).bindPopup('markerClusterGroup'))
+  // })
+  basePoint.forEach((point) => {
+    markers.push(marker([point.lat, point.lng]).bindPopup(`<h4>${point.devicePosition}</h4>`))
   })
   // console.time('addLayers')
-  addMarkerClusterGroup(marker)
+  addLayer(markers, 'markerClusterGroup')
   // console.timeEnd('addLayers')
+  toRawMap.fitBounds(markerClusterGroup.getBounds())
+  lineData.forEach((geojson) => {
+    addLayer(geojson, 'geoJSON')
+  })
+  const hasLayer = hasLayerMap('geoJSON')
+  console.log('hasLayerMap: ', hasLayer)
+  if (hasLayer) {
+    hasLayer.setStyle({
+      weight: 2,
+    })
+    hasLayer?.bindPopup(({ feature }) => {
+      return `<h3>${feature.properties.name}</h3>`
+    })
+  }
 })
 </script>
 
