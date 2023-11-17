@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { LatLngBoundsExpression, Layer, Map } from 'leaflet'
+import type { LatLngBoundsExpression, LatLngExpression, Layer, Map, TileLayerOptions } from 'leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
@@ -15,13 +15,13 @@ import { useLMap } from '@/hooks/web/map/useLMap'
 
 const props = defineProps<{
   zoom: number
-  center: L.LatLngExpression
+  center: LatLngExpression
 }>()
 const map = ref<Map>()
 const mapContainer = ref<string | HTMLElement>('')
 interface tileLayer {
   tileUrl: string
-  options?: L.TileLayerOptions
+  options?: TileLayerOptions
 }
 const accessToken = 'pk.eyJ1IjoiaHlzZSIsImEiOiJjbGVwcWg0bDkwZXNlM3pvNXNleWUzcTQ0In0.S3VTf9vqYTAAF725ukcDjQ'
 const tileLayers: Array<tileLayer> = [
@@ -75,8 +75,10 @@ onMounted(async () => {
   layerData.forEach(({ name, key, latlng, options }) => {
     const { url } = options
     const color = url ? '#4CAF50' : '#FF5722'
-    const layer = rectangle(latlng as LatLngBoundsExpression, { color }).bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
+    const layer = rectangle(latlng as LatLngBoundsExpression, { color, key: `rectangle-${key}-clipPath` }).bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
     addLayer(layer)
+    layer._path.setAttribute('clip-path', `url(#rectangle-${key}-clipPath)`)
+
     if (url)
       addLayer(imageOverlay(options.url, latlng))
   })
