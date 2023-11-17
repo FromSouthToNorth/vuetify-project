@@ -88,7 +88,7 @@ onMounted(async () => {
   //   marker.push(geometryToLayer(e).bindPopup('markerClusterGroup'))
   // })
   basePoint.forEach((point) => {
-    markers.push(marker([point.lat, point.lng]).bindPopup(`<h4>${point.devicePosition}</h4>`))
+    markers.push(marker([point.lat, point.lng]).bindPopup(`<h4>${point.devicePosition}</h4>`).bindTooltip(`${point.deviceID}`, { permanent: true }))
   })
   // console.time('addLayers')
   addLayer(markers, 'markerClusterGroup')
