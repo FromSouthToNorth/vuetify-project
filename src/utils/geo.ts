@@ -1,4 +1,16 @@
-import type { CircleMarker, CircleMarkerOptions, IconOptions, ImageOverlay, ImageOverlayOptions, LatLng, LatLngBoundsExpression, LatLngExpression, Layer, LayerOptions, PolylineOptions } from 'leaflet'
+import type {
+  CircleMarker,
+  CircleMarkerOptions,
+  IconOptions,
+  ImageOverlay,
+  ImageOverlayOptions,
+  LatLng,
+  LatLngBoundsExpression,
+  LatLngExpression,
+  Layer,
+  LayerOptions,
+  PolylineOptions,
+} from 'leaflet'
 import L from 'leaflet'
 import * as turf from '@turf/turf'
 import type { BBox, FeatureCollection } from '@turf/turf'

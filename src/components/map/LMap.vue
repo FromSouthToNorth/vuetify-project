@@ -1,5 +1,11 @@
 <script lang="ts" setup>
-import type { LatLngBoundsExpression, LatLngExpression, Layer, Map, TileLayerOptions } from 'leaflet'
+import type {
+  LatLngBoundsExpression,
+  LatLngExpression,
+  Layer,
+  Map,
+  TileLayerOptions,
+} from 'leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.markercluster'
@@ -10,7 +16,13 @@ import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
 import { behaviorHash } from '@/hooks/web/map/useHash'
 import { basePoint, layerData, lineData } from '@/data'
-import { geometryToLayer, imageOverlay, marker, randomPoint, rectangle } from '@/utils/geo'
+import {
+  geometryToLayer,
+  imageOverlay,
+  marker,
+  randomPoint,
+  rectangle,
+} from '@/utils/geo'
 import { useLMap } from '@/hooks/web/map/useLMap'
 
 const props = defineProps<{
@@ -75,7 +87,8 @@ onMounted(async () => {
   layerData.forEach(({ name, key, latlng, options }) => {
     const { url } = options
     const color = url ? '#4CAF50' : '#FF5722'
-    const layer = rectangle(latlng as LatLngBoundsExpression, { color, key: `rectangle-${key}-clipPath` }).bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
+    const layer = rectangle(latlng as LatLngBoundsExpression, { color, key: `rectangle-${key}-clipPath` })
+      .bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
     addLayer(layer)
     layer._path.setAttribute('clip-path', `url(#rectangle-${key}-clipPath)`)
 
@@ -90,7 +103,9 @@ onMounted(async () => {
   //   marker.push(geometryToLayer(e).bindPopup('markerClusterGroup'))
   // })
   basePoint.forEach((point) => {
-    markers.push(marker([point.lat, point.lng]).bindPopup(`<h4>${point.devicePosition}</h4>`).bindTooltip(`${point.deviceID}`, { permanent: true }))
+    markers.push(marker([point.lat, point.lng])
+      .bindPopup(`<h4>${point.devicePosition}</h4>`)
+      .bindTooltip(`${point.deviceID}`, { permanent: true }))
   })
   // console.time('addLayers')
   addLayer(markers, 'markerClusterGroup')
