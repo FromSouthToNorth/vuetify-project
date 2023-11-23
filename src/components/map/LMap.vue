@@ -87,10 +87,14 @@ onMounted(async () => {
   layerData.forEach(({ name, key, latlng, options }) => {
     const { url } = options
     const color = url ? '#4CAF50' : '#FF5722'
-    const layer = rectangle(latlng as LatLngBoundsExpression, { color, key: `rectangle-${key}-clipPath` })
+    const _key = `rectangle-${key}-clippath`
+    const layer = rectangle(
+      latlng as LatLngBoundsExpression,
+      { color, key: _key, fill: false, weight: 60, opacity: 0.6 },
+    )
       .bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
     addLayer(layer)
-    layer._path.setAttribute('clip-path', `url(#rectangle-${key}-clipPath)`)
+    layer._path.setAttribute('clip-path', `url(#${_key})`)
 
     if (url)
       addLayer(imageOverlay(options.url, latlng))

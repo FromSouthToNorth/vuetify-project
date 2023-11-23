@@ -14,6 +14,12 @@ dependencies:
   core-js:
     specifier: ^3.29.0
     version: 3.33.2
+  d3-geo:
+    specifier: ^3.1.0
+    version: 3.1.0
+  d3-geo-projection:
+    specifier: ^4.0.0
+    version: 4.0.0
   leaflet:
     specifier: ^1.9.4
     version: 1.9.4
@@ -49,6 +55,9 @@ devDependencies:
   '@babel/types':
     specifier: ^7.21.4
     version: 7.23.0
+  '@types/d3-geo':
+    specifier: ^3.1.0
+    version: 3.1.0
   '@types/geojson':
     specifier: ^7946.0.13
     version: 7946.0.13
@@ -1854,6 +1863,12 @@ packages:
     resolution: {integrity: sha512-69TtiDzu0bcmKQv3yg1Zx409/Kd7r0b5F1PfpYJfSHzLGtB53547V4u+9iqKYsTu/O2ai6KTb0TInNpvuQ3qmg==}
     dev: true
 
+  /@types/d3-geo@3.1.0:
+    resolution: {integrity: sha512-856sckF0oP/diXtS4jNsiQw/UuK5fQG8l/a9VVLeSouf1/PPbBE1i1W852zVwKwYCBkFJJB7nCFTbk6UMEXBOQ==}
+    dependencies:
+      '@types/geojson': 7946.0.13
+    dev: true
+
   /@types/geojson@7946.0.13:
     resolution: {integrity: sha512-bmrNrgKMOhM3WsafmbGmC+6dsF2Z308vLFsQ3a/bT8X8Sv5clVYpPars/UPq+sAaJP+5OoLAYgwbkS5QEJdLUQ==}
     dev: true
@@ -2720,6 +2735,11 @@ packages:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: false
 
+  /commander@7.2.0:
+    resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
+    engines: {node: '>= 10'}
+    dev: false
+
   /comment-parser@1.4.0:
     resolution: {integrity: sha512-QLyTNiZ2KDOibvFPlZ6ZngVsZ/0gYnE6uTXi5aoDg8ed3AkJAz4sEje3Y8a29hQ1s6A99MZXe47fLAXQ1rTqaw==}
     engines: {node: '>= 12.0.0'}
@@ -2782,10 +2802,34 @@ packages:
     resolution: {integrity: sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==}
     dev: false
 
+  /d3-array@3.2.4:
+    resolution: {integrity: sha512-tdQAmyA18i4J7wprpYq8ClcxZy3SC31QMeByyCFyRt7BVHdREQZ5lpzoe5mFEYZUWe+oq8HBvk9JjpibyEV4Jg==}
+    engines: {node: '>=12'}
+    dependencies:
+      internmap: 2.0.3
+    dev: false
+
+  /d3-geo-projection@4.0.0:
+    resolution: {integrity: sha512-p0bK60CEzph1iqmnxut7d/1kyTmm3UWtPlwdkM31AU+LW+BXazd5zJdoCn7VFxNCHXRngPHRnsNn5uGjLRGndg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    dependencies:
+      commander: 7.2.0
+      d3-array: 3.2.4
+      d3-geo: 3.1.0
+    dev: false
+
   /d3-geo@1.7.1:
     resolution: {integrity: sha512-O4AempWAr+P5qbk2bC2FuN/sDW4z+dN2wDf9QV3bxQt4M5HfOEeXLgJ/UKQW0+o1Dj8BE+L5kiDbdWUMjsmQpw==}
     dependencies:
       d3-array: 1.2.4
+    dev: false
+
+  /d3-geo@3.1.0:
+    resolution: {integrity: sha512-JEo5HxXDdDYXCaWdwLRt79y7giK8SbhZJbFWXqbRTolCHFI5jRqteLzCsq51NKbUoX0PjBVSohxrx+NoOUujYA==}
+    engines: {node: '>=12'}
+    dependencies:
+      d3-array: 3.2.4
     dev: false
 
   /d3-voronoi@1.1.2:
@@ -3748,6 +3792,11 @@ packages:
       hasown: 2.0.0
       side-channel: 1.0.4
     dev: true
+
+  /internmap@2.0.3:
+    resolution: {integrity: sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==}
+    engines: {node: '>=12'}
+    dev: false
 
   /is-alphabetical@1.0.4:
     resolution: {integrity: sha512-DwzsA04LQ10FHTZuL0/grVDk4rFoVH1pjAToYwBrHSxcrBIGQuXrQMtD5U1b0U2XVgKZCTLLP8u2Qxqhy3l2Vg==}
