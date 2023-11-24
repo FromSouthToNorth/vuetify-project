@@ -15,7 +15,7 @@ import { onMounted, ref, toRaw } from 'vue'
 import { createMapInfoLControl } from './control/mapInfoControl/index'
 import { useAppStore } from '@/store/app'
 import { behaviorHash } from '@/hooks/web/map/useHash'
-import { basePoint, layerData, lineData } from '@/data'
+import { basePoint, layerData, lineData, yhxmcBasePoint, yhxmcData } from '@/data'
 import {
   geometryToLayer,
   imageOverlay,
@@ -87,7 +87,7 @@ onMounted(async () => {
   layerData.forEach(({ name, key, latlng, options }) => {
     const { url } = options
     const color = url ? '#4CAF50' : '#FF5722'
-    const _key = `rectangle-${key}-clippath`
+    const _key = `rectangle-hlh-${key}-clippath`
     const layer = rectangle(
       latlng as LatLngBoundsExpression,
       { color, key: _key, fill: false, weight: 60, opacity: 0.6 },
@@ -109,12 +109,11 @@ onMounted(async () => {
   basePoint.forEach((point) => {
     markers.push(marker([point.lat, point.lng])
       .bindPopup(`<h4>${point.devicePosition}</h4>`)
-      .bindTooltip(`${point.deviceID}`, { permanent: true }))
+      .bindTooltip(`${point.deviceId}`, { permanent: true }))
   })
   // console.time('addLayers')
   addLayer(markers, 'markerClusterGroup')
   // console.timeEnd('addLayers')
-  toRawMap.fitBounds(markerClusterGroup.getBounds())
   lineData.forEach((geojson) => {
     addLayer(geojson, 'geoJSON')
   })
@@ -128,6 +127,30 @@ onMounted(async () => {
       return `<h3>${feature.properties.name}</h3>`
     })
   }
+  yhxmcData.forEach(({ name, key, latlng, options }) => {
+    const { url } = options
+    const color = url ? '#4CAF50' : '#FF5722'
+    const _key = `rectangle-yhxmc-${key}-clippath`
+    const layer = rectangle(
+      latlng as LatLngBoundsExpression,
+      { color, key: _key, fill: false, weight: 60, opacity: 0.6 },
+    )
+      .bindPopup(`<h5>${key}</h5><h4>${name}</h4>`)
+    addLayer(layer)
+    layer._path.setAttribute('clip-path', `url(#${_key})`)
+    console.log(url)
+
+    if (url)
+      addLayer(imageOverlay(options.url, latlng as LatLngBoundsExpression))
+  })
+  const yhxmcPoints = yhxmcBasePoint.map((point) => {
+    return marker([point.lat, point.lng])
+      .bindPopup(`<h4>${point.devicePosition}</h4>`)
+      .bindTooltip(`${point.deviceId}`, { permanent: true })
+  })
+  addLayer(yhxmcPoints, 'markerClusterGroup')
+
+  toRawMap.fitBounds(markerClusterGroup.getBounds())
 })
 </script>
 
